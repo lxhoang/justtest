@@ -4,7 +4,7 @@ class BasePage
 	
 	def initialize browser
 		@browser = browser
-
+		@browser.manage.window.maximize
 		# set implicit wait for selenium driver
 		@browser.manage.timeouts.implicit_wait = 10 # seconds
 
@@ -12,13 +12,10 @@ class BasePage
 	end
 
 	def select_dropdown(locator, item)
-		begin
-			dropdown = @browser.find_element(locator)
-			dropdown_list = Selenium::WebDriver::Support::Select.new(dropdown)
-			dropdown_list.select_by(:text, item)
-		rescue Exception => e
-			raise "Cannot select item of dropdown caused by #{e.message}"
-		end
+		dropdown = @browser.find_element(locator)
+		options = dropdown.find_elements(tag_name: 'option')
+		options.each { |option| option.click if option.text == item.to_s }
+
 	end
 
 end
